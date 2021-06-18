@@ -81,7 +81,24 @@ router.put('/:id', auth, async (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-  res.send('Delete an entry');
+  try {
+    let entry = await Entry.findById(req.params.id);
+
+    if (!entry) return res.status(404).json({ msg: 'Entry not found' });
+
+    // Ensure user owns contact
+    if (entry.user.toString() !== req.user.id) {
+      return res.status(404).json({ msg: 'Not authorized' });
+    }
+
+    await Entry.findByIdAndRemove(req.params.id);
+
+    res.json({ msg: 'Entry deleted' });
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
 });
 
 module.exports = router;
