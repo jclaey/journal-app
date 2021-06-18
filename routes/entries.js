@@ -46,8 +46,38 @@ router.post('/', [auth, [
   }
 });
 
-router.put('/:id', (req, res) => {
-  res.send('Edit an entry');
+router.put('/:id', auth, async (req, res) => {
+  const { title, body, type } = req.body;
+
+  // Build contact object
+  const EntryFields = {};
+
+  if (title) entryFields.title = title;
+  if (body) entryFields.body = body;
+  if (type) entryFields.type = type;
+
+  try {
+    let entry = await Entry.findById(req.params.id);
+
+    if (!entry) return res.status(404).json({ msg: 'Entry not found' });
+
+    // Ensure user owns contact
+    if (entry.user.toString() !== req.user.id) {
+      return res.status(404).json({ msg: 'Not authorized' });
+    }
+
+    entry = await Entry.findByIdAndUpdate(
+      req.params.id, 
+      { $set: entryFields },
+      { new: true }
+    );
+
+    res.json(entry);
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
 });
 
 router.delete('/:id', (req, res) => {
