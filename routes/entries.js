@@ -80,7 +80,7 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     let entry = await Entry.findById(req.params.id);
 
