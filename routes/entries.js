@@ -27,13 +27,12 @@ router.post('/', [auth, [
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { title, body, type } = req.body;
+  const { title, body } = req.body;
 
   try {
     const newEntry = new Entry({
       title,
       body,
-      type,
       user: req.user.id
     });
 
@@ -47,14 +46,13 @@ router.post('/', [auth, [
 });
 
 router.put('/:id', auth, async (req, res) => {
-  const { title, body, type } = req.body;
+  const { title, body } = req.body;
 
   // Build contact object
   const EntryFields = {};
 
   if (title) entryFields.title = title;
   if (body) entryFields.body = body;
-  if (type) entryFields.type = type;
 
   try {
     let entry = await Entry.findById(req.params.id);

@@ -14,10 +14,6 @@ const EntrySchema = new Schema({
     type: String,
     required: true
   },
-  type: {
-    type: String,
-    default: 'private'
-  },
   date: {
     type: Date,
     default: Date.now
