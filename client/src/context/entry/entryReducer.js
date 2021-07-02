@@ -7,6 +7,7 @@ import {
   UPDATE_ENTRY,
   FILTER_ENTRIES,
   CLEAR_FILTER,
+  ENTRY_ERROR,
   SET_ALERT,
   REMOVE_ALERT
 } from '../Types';
@@ -50,6 +51,11 @@ export default (state, action) => {
         return {
           ...state,
           filtered: null
+        }
+      case ENTRY_ERROR:
+        return {
+          ...state,
+          error: action.payload
         }
     default: 
       return state;

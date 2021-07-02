@@ -1,5 +1,5 @@
 import React, { useReducer } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 import EntryContext from './entryContext';
 import entryReducer from './entryReducer';
 
@@ -11,38 +11,37 @@ import {
   UPDATE_ENTRY,
   FILTER_ENTRIES,
   CLEAR_FILTER,
+  ENTRY_ERROR,
   SET_ALERT,
   REMOVE_ALERT
 } from '../Types';
 
 const EntryState = props => {
   const initialState = {
-    entries: [
-      {
-        id: 1,
-        title: 'My First Entry',
-        body: 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Assumenda accusantium provident in veritatis ratione mollitia fugit aliquam dignissimos sint laborum!'
-      },
-      {
-        id: 2,
-        title: 'A Tail of Two Dogs',
-        body: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam vitae voluptas nemo pariatur delectus voluptatibus fugit accusamus repellendus modi sapiente.'
-      },
-      {
-        id: 3,
-        title: 'Something Soggy In My Shoe',
-        body: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Adipisci quisquam, fugiat corrupti sint vel quasi distinctio est alias ab culpa.'
-      }
-    ],
+    entries: [],
     current: null,
-    filtered: null
+    filtered: null,
+    error: null
   };
 
   const [state, dispatch] = useReducer(entryReducer, initialState);
 
-  const addEntry = entry => {
-    entry.id = uuidv4();
-    dispatch({ type: ADD_ENTRY, payload: entry });
+  const addEntry = async entry => {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+
+    try {
+      const res = await axios.post('/api/entries', entry, config);
+
+      dispatch({ type: ADD_ENTRY, payload: res.data });
+    } catch (err) {
+      dispatch({ type: ENTRY_ERROR, payload: err.response.msg });
+    }
+
+    
   };
 
   const deleteEntry = id => {
@@ -75,6 +74,7 @@ const EntryState = props => {
         entries: state.entries,
         current: state.current,
         filtered: state.filtered,
+        error: state.error,
         addEntry,
         deleteEntry,
         setCurrent,

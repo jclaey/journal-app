@@ -13,7 +13,7 @@ const Entries = () => {
 
   return (
     <Fragment>
-      {filtered !== null ? filtered.map(entry => <EntryItem key={entry.id} entry={entry} />) : entries.map(entry => <EntryItem key={entry.id} entry={entry} />)}
+      {filtered !== null ? filtered.map(entry => <EntryItem key={entry._id} entry={entry} />) : entries.map(entry => <EntryItem key={entry._id} entry={entry} />)}
     </Fragment>
   )
 };
